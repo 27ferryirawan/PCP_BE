@@ -1,0 +1,14 @@
+[
+    {
+        "URL": "http://20.247.180.239/IDORequestService",
+        "ConfigName": "DEMO_LOND"
+    },
+    {
+        "URL": "http://20.247.180.239/IDORequestService",
+        "ConfigName": "DEMO_DALS"
+    },
+    {
+        "URL": "http://20.247.180.239/IDORequestService",
+        "ConfigName": "DEMO_LA"
+    }
+]
