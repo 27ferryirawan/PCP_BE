@@ -8,10 +8,12 @@ use Illuminate\Support\Facades\Response;
 class PCPRevisionUpdateController extends Controller
 {
     public function PCPRevisionUpdate(Request $request){ 
-        $configPath = '/Users/ferryirawan/Desktop/PCP_BE/config.json';
+        $configPath = base_path()."/config.json";
         $json = json_decode(file_get_contents($configPath), true); 
         $csi_url = '';
         $csi_site = '';
+        $deleteResult = [];
+        $revisionResult = [];
         foreach ($json as $fileData) {
             if($fileData['ConfigName'] == $request->header('ConfigName')){
                 $csi_url = $fileData['URL'];
@@ -28,15 +30,14 @@ class PCPRevisionUpdateController extends Controller
         $tokenData = $request->header('Authorization');
         $client = new Client();
         foreach ($request->input('revision_doc') as $revisionDoc) {
-            $loadCollectionIDO = 'PCP_RevisionUpdate';
+            $loadCollectionIDO = 'AS_PCP_RevisionStats';
             $loadCollectionProperties = 'pcp_num, revision, stat';
             $loadCollectionFilter = "pcp_num = '".$revisionDoc['pcp_num']."'";
             $loadCollectRes = $client->request('GET', $csi_url . "/ido/load/" . $loadCollectionIDO . "?properties=" . $loadCollectionProperties . "&filter=" . $loadCollectionFilter, ['headers' => ['Authorization' => $tokenData]]);
             $checkPCPExist = json_decode($loadCollectRes->getBody(), true);
-
-            if($checkPCPExist['Items'] == null){
+            if($checkPCPExist['Items'] == null && count($checkPCPExist['Items']) > 0){
                 return $checkPCPExist;
-            } else if(count($checkPCPExist['Items']) > 0){
+            } else if($checkPCPExist['Items'] != null && count($checkPCPExist['Items']) > 0){
                 foreach ($checkPCPExist['Items'] as $itemData) {
                     $deleteResult[] = 
                         [
@@ -72,7 +73,7 @@ class PCPRevisionUpdateController extends Controller
 
         if(count($deleteResult) > 0){
             $insertBody['Changes'] = $deleteResult;
-            $insertRes = $client->request('POST', $csi_url.'/ido/update/PCP_RevisionUpdate?refresh=true', ['headers' => ['Authorization' => $tokenData], 'json' => $insertBody]);
+            $insertRes = $client->request('POST', $csi_url.'/ido/update/AS_PCP_RevisionStats?refresh=true', ['headers' => ['Authorization' => $tokenData], 'json' => $insertBody]);
             $insertResponse = json_decode($insertRes->getBody()->getContents(), true);
         }  
 
@@ -87,7 +88,7 @@ class PCPRevisionUpdateController extends Controller
             }
             
             $insertBody['Changes'] = $revisionChanges;
-            $insertRes = $client->request('POST', $csi_url.'/ido/update/PCP_RevisionUpdate?refresh=true', ['headers' => ['Authorization' => $tokenData], 'json' => $insertBody]);
+            $insertRes = $client->request('POST', $csi_url.'/ido/update/AS_PCP_RevisionStats?refresh=true', ['headers' => ['Authorization' => $tokenData], 'json' => $insertBody]);
             $insertResponse = json_decode($insertRes->getBody()->getContents(), true);
             return $insertResponse;
         }  
@@ -99,7 +100,7 @@ class PCPRevisionUpdateController extends Controller
     }
 
     public function PCPGetRevisionUpdate(Request $request){ 
-        $configPath = '/Users/ferryirawan/Desktop/PCP_BE/config.json';
+        $configPath = base_path()."/config.json";
         $json = json_decode(file_get_contents($configPath), true); 
         foreach ($json as $fileData) {
             if($fileData['ConfigName'] == $request->header('ConfigName')){
@@ -118,7 +119,7 @@ class PCPRevisionUpdateController extends Controller
                 'Message'   =>  $tokenErrorMessage
             ), 404);
         }
-        $loadCollectionIDO = 'PCP_RevisionUpdate';
+        $loadCollectionIDO = 'AS_PCP_RevisionStats';
         $loadCollectionProperties = 'pcp_num, revision, stat';
         $loadCollectionFilter = "";
         $loadCollectRes = $client->request('GET', $csi_url . "/ido/load/" . $loadCollectionIDO . "?properties=" . $loadCollectionProperties . "&filter=" . $loadCollectionFilter, ['headers' => ['Authorization' => $tokenData]]);
