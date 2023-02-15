@@ -10,5 +10,9 @@
     {
         "URL": "http://20.247.180.239/IDORequestService",
         "ConfigName": "DEMO_LA"
+    },
+    {
+        "URL": "http://20.247.180.239/IDORequestService",
+        "ConfigName": "DEMO_US"
     }
 ]
