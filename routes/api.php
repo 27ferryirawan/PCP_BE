@@ -19,8 +19,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/pcp-revision-update', 'PCPRevisionUpdateController@PCPRevisionUpdate');
-Route::get('/pcp-bom-copy', 'PCPRevisionUpdateController@PCPBOMCopy');
-Route::get('/pcp-get-revision-update', 'PCPRevisionUpdateController@PCPGetRevisionUpdate');
+Route::post('/pcp-revision-update', 'PCPRevisionUpdateController@PCPRevisionUpdate');
+Route::post('/pcp-bom-copy', 'PCPRevisionUpdateController@PCPBOMCopy');
+Route::post('/pcp-get-revision-update', 'PCPRevisionUpdateController@PCPGetRevisionUpdate');
 
     

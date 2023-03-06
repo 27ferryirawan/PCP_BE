@@ -32,15 +32,15 @@ class PCPRevisionUpdateController extends Controller
             'Code'      =>  404,
             'Message'   => 'No Config Name found'
         ), 404);
-
-        if(($request->input('pcp_doc')['item'] == null || $request->input('pcp_doc')['item'] == "") || ($request->input('pcp_doc')['fa_item'] == null || $request->input('pcp_doc')['fa_item'] == "")){
+        return $request->input('pcp_doc')['item'];
+        if(($request->input('pcp_doc')['item'] == null || $request->input('pcp_doc')['item'] == "") && ($request->input('pcp_doc')['fa_item'] == null || $request->input('pcp_doc')['fa_item'] == "")){
             return Response::json(array(
                 'Success'   => false,
                 'Code'      =>  404,
                 'Message'   => 'Item or FA Item must be filled'
             ), 404); 
         }
-
+        return "Asd";
         $tokenData = $request->header('Authorization');
         $client = new Client();
         
@@ -452,19 +452,38 @@ class PCPRevisionUpdateController extends Controller
         if ($insertResponse3['Success']){
             $pcp_saleshdr_res = $insertResponse3;
         }
+        //INVOKE START
+        $invokeResult = '';
+        $invokeIDO = 'SLItems';
+        $invokeMethod = 'AS_PCP_CopyBOMSp';
+        $invokeBody = [
+            "", //INFOBAR
+            $request->input('pcp_doc')['pcp_num'],
+            $request->input('pcp_doc')['revision'],
+            "", //SITE
+        ];
+        $invokeRes = $client->request('POST', $csi_url . "/ido/invoke/" . $invokeIDO . "?method=" . $invokeMethod . "", ['headers' => ['Authorization' => $tokenData], 'json' => $invokeBody]);
+        $invokeResponse = json_decode($invokeRes->getBody()->getContents(), true);
+        if ($invokeResponse['ReturnValue'] != 0) {
+            return Response::json(array(
+                'Success'   => false,
+                'Code'      => 404,
+                'Message'   =>  $invokeResponse['Parameters'][0]
+            ), 404);
+        } 
+        //INVOKE END
 
-        if ($pcp_sales_res != [] || $pcp_process_res != [] || $pcp_matl_res != []){
+        if ($pcp_saleshdr_res != [] && $pcp_sales_res != [] && $pcp_process_res != [] && $pcp_matl_res != []){
             return [
-                'Sales_Header' => $pcp_saleshdr_res,
-                'Sales' => $pcp_process_res,
-                'Process' => $pcp_sales_res,
-                'Matl' => $pcp_matl_res
+                'Success'   => true,
+                'Code'      => 200,
+                'Message'   => null
             ];
         } else {
             return Response::json(array(
                 'Success'   => false,
-                'Code'      =>  404,
-                'Message'   => 'No BOM Copy needed to be updated'
+                'Code'      => 404,
+                'Message'   => 'BOM Copy failed'
             ), 404);
         }
     }
@@ -491,13 +510,14 @@ class PCPRevisionUpdateController extends Controller
 
         $tokenData = $request->header('Authorization');
         $client = new Client();
-        foreach ($request->input('revision_doc') as $revisionDoc) {
+        $request = json_decode(json_encode(json_decode(preg_replace('/\xc2\xa0/', '', $request->getContent())), JSON_PRETTY_PRINT),true);
+        
+        foreach ($request['revision_doc'] as $revisionDoc) {
             $loadCollectionIDO = 'AS_PCP_RevisionStats';
             $loadCollectionProperties = 'pcp_num, revision, stat';
             $loadCollectionFilter = "pcp_num = '".$revisionDoc['pcp_num']."'";
             $loadCollectRes = $client->request('GET', $csi_url . "/ido/load/" . $loadCollectionIDO . "?properties=" . $loadCollectionProperties . "&filter=" . $loadCollectionFilter, ['headers' => ['Authorization' => $tokenData]]);
             $checkPCPExist = json_decode($loadCollectRes->getBody(), true);
-
             if($checkPCPExist['Items'] == null && count($checkPCPExist['Items']) > 0){
                 return $checkPCPExist;
             } else if($checkPCPExist['Items'] != null && count($checkPCPExist['Items']) > 0){
@@ -555,7 +575,13 @@ class PCPRevisionUpdateController extends Controller
             $loadCollectionIDO = 'AS_PCP_RevisionStats';
             $insertRes = $client->request('POST', $csi_url.'/ido/update/'.$loadCollectionIDO.'?refresh=true', ['headers' => ['Authorization' => $tokenData], 'json' => $insertBody]);
             $insertResponse = json_decode($insertRes->getBody()->getContents(), true);
-            return $insertResponse;
+            if ($insertResponse['Success']){
+                return [
+                    'Success'   => true,
+                    'Code'      => 200,
+                    'Message'   => null
+                ];
+            }
         }  
         return Response::json(array(
             'Success'   => false,
