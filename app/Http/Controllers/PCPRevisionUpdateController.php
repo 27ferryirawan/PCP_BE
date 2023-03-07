@@ -32,7 +32,15 @@ class PCPRevisionUpdateController extends Controller
             'Code'      =>  404,
             'Message'   => 'No Config Name found'
         ), 404);
-        return $request->input('pcp_doc')['item'];
+        
+        if (empty($request->all())){
+            return Response::json(array(
+                'Success'   => false,
+                'Code'      =>  404,
+                'Message'   => 'Invalid JSON format'
+            ), 404);
+        }
+        
         if(($request->input('pcp_doc')['item'] == null || $request->input('pcp_doc')['item'] == "") && ($request->input('pcp_doc')['fa_item'] == null || $request->input('pcp_doc')['fa_item'] == "")){
             return Response::json(array(
                 'Success'   => false,
@@ -40,7 +48,8 @@ class PCPRevisionUpdateController extends Controller
                 'Message'   => 'Item or FA Item must be filled'
             ), 404); 
         }
-        return "Asd";
+        
+        
         $tokenData = $request->header('Authorization');
         $client = new Client();
         
@@ -507,6 +516,14 @@ class PCPRevisionUpdateController extends Controller
             'Code'      =>  404,
             'Message'   => 'No Config Name found'
         ), 404);
+
+        if (empty($request->all())){
+            return Response::json(array(
+                'Success'   => false,
+                'Code'      =>  404,
+                'Message'   => 'Invalid JSON format'
+            ), 404);
+        }
 
         $tokenData = $request->header('Authorization');
         $client = new Client();
