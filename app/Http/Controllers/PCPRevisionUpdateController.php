@@ -32,16 +32,18 @@ class PCPRevisionUpdateController extends Controller
             'Code'      =>  404,
             'Message'   => 'No Config Name found'
         ), 404);
-        
-        if (empty($request->all())){
+
+        $tokenData = $request->header('Authorization');
+        $request = json_decode(json_encode(json_decode(preg_replace('/\xc2\xa0/', '', $request->getContent())), JSON_PRETTY_PRINT),true);
+        if (empty($request)){
             return Response::json(array(
                 'Success'   => false,
                 'Code'      =>  404,
                 'Message'   => 'Invalid JSON format'
             ), 404);
         }
-        
-        if(($request->input('pcp_doc')['item'] == null || $request->input('pcp_doc')['item'] == "") && ($request->input('pcp_doc')['fa_item'] == null || $request->input('pcp_doc')['fa_item'] == "")){
+
+        if(($request['pcp_doc']['item'] == null || $request['pcp_doc']['item'] == "") && ($request['pcp_doc']['fa_item'] == null || $request['pcp_doc']['fa_item'] == "")){
             return Response::json(array(
                 'Success'   => false,
                 'Code'      =>  404,
@@ -49,14 +51,12 @@ class PCPRevisionUpdateController extends Controller
             ), 404); 
         }
         
-        
-        $tokenData = $request->header('Authorization');
         $client = new Client();
         
         //PCP Sales
         $loadCollectionIDO = 'AS_PCP_SalesReqLines';
         $loadCollectionProperties = 'pcp_num';
-        $loadCollectionFilter = "pcp_num = '".$request->input('pcp_doc')['pcp_num']."'";
+        $loadCollectionFilter = "pcp_num = '".$request['pcp_doc']['pcp_num']."'";
         $loadCollectRes = $client->request('GET', $csi_url . "/ido/load/" . $loadCollectionIDO . "?properties=" . $loadCollectionProperties . "&filter=" . $loadCollectionFilter, ['headers' => ['Authorization' => $tokenData]]);
         $checkPCPExist = json_decode($loadCollectRes->getBody(), true);
         if($checkPCPExist['Items'] == null && count($checkPCPExist['Items']) > 0){
@@ -71,17 +71,17 @@ class PCPRevisionUpdateController extends Controller
             }
         }
 
-        foreach ($request->input('pcp_doc')['pcp_sales_detail'] as $revisionDoc) {
+        foreach ($request['pcp_doc']['pcp_sales_detail'] as $revisionDoc) {
             $revisionResult[] = [
                 [
                     'Name' => "pcp_num",
-                    'Value' => $request->input('pcp_doc')['pcp_num'],
+                    'Value' => $request['pcp_doc']['pcp_num'],
                     'Modified' => true,
                     'ISNull' => false,
                 ],
                 [
                     'Name' => "revision",
-                    'Value' => $request->input('pcp_doc')['revision'],
+                    'Value' => $request['pcp_doc']['revision'],
                     'Modified' => true,
                     'ISNull' => false,
                 ],
@@ -133,7 +133,7 @@ class PCPRevisionUpdateController extends Controller
         //PCP Process
         $loadCollectionIDO = 'AS_PCP_Process';
         $loadCollectionProperties = 'pcp_num';
-        $loadCollectionFilter = "pcp_num = '".$request->input('pcp_doc')['pcp_num']."'";
+        $loadCollectionFilter = "pcp_num = '".$request['pcp_doc']['pcp_num']."'";
         $loadCollectRes = $client->request('GET', $csi_url . "/ido/load/" . $loadCollectionIDO . "?properties=" . $loadCollectionProperties . "&filter=" . $loadCollectionFilter, ['headers' => ['Authorization' => $tokenData]]);
         $checkPCPExist = json_decode($loadCollectRes->getBody(), true);
         if($checkPCPExist['Items'] == null && count($checkPCPExist['Items']) > 0){
@@ -148,17 +148,17 @@ class PCPRevisionUpdateController extends Controller
             }
         }
 
-        foreach ($request->input('pcp_doc')['pcp_process_detail'] as $revisionDoc) {
+        foreach ($request['pcp_doc']['pcp_process_detail'] as $revisionDoc) {
             $revisionResult1[] = [
                 [
                     'Name' => "pcp_num",
-                    'Value' => $request->input('pcp_doc')['pcp_num'],
+                    'Value' => $request['pcp_doc']['pcp_num'],
                     'Modified' => true,
                     'ISNull' => false,
                 ],
                 [
                     'Name' => "revision",
-                    'Value' => $request->input('pcp_doc')['revision'],
+                    'Value' => $request['pcp_doc']['revision'],
                     'Modified' => true,
                     'ISNull' => false,
                 ],
@@ -240,7 +240,7 @@ class PCPRevisionUpdateController extends Controller
         //PCP Matl
         $loadCollectionIDO = 'AS_PCP_Matl';
         $loadCollectionProperties = 'pcp_num';
-        $loadCollectionFilter = "pcp_num = '".$request->input('pcp_doc')['pcp_num']."'";
+        $loadCollectionFilter = "pcp_num = '".$request['pcp_doc']['pcp_num']."'";
         $loadCollectRes = $client->request('GET', $csi_url . "/ido/load/" . $loadCollectionIDO . "?properties=" . $loadCollectionProperties . "&filter=" . $loadCollectionFilter, ['headers' => ['Authorization' => $tokenData]]);
         $checkPCPExist = json_decode($loadCollectRes->getBody(), true);
         if($checkPCPExist['Items'] == null && count($checkPCPExist['Items']) > 0){
@@ -255,17 +255,17 @@ class PCPRevisionUpdateController extends Controller
             }
         }
 
-        foreach ($request->input('pcp_doc')['pcp_matl_detail'] as $revisionDoc) {
+        foreach ($request['pcp_doc']['pcp_matl_detail'] as $revisionDoc) {
             $revisionResult2[] = [
                 [
                     'Name' => "pcp_num",
-                    'Value' => $request->input('pcp_doc')['pcp_num'],
+                    'Value' => $request['pcp_doc']['pcp_num'],
                     'Modified' => true,
                     'ISNull' => false,
                 ],
                 [
                     'Name' => "revision",
-                    'Value' => $request->input('pcp_doc')['revision'],
+                    'Value' => $request['pcp_doc']['revision'],
                     'Modified' => true,
                     'ISNull' => false,
                 ],
@@ -299,7 +299,7 @@ class PCPRevisionUpdateController extends Controller
         //PCP Sales Header
         $loadCollectionIDO = 'AS_PCP_SalesHdr';
         $loadCollectionProperties = 'pcp_num';
-        $loadCollectionFilter = "pcp_num = '".$request->input('pcp_doc')['pcp_num']."'";
+        $loadCollectionFilter = "pcp_num = '".$request['pcp_doc']['pcp_num']."'";
         $loadCollectRes = $client->request('GET', $csi_url . "/ido/load/" . $loadCollectionIDO . "?properties=" . $loadCollectionProperties . "&filter=" . $loadCollectionFilter, ['headers' => ['Authorization' => $tokenData]]);
         $checkPCPExist = json_decode($loadCollectRes->getBody(), true);
         if($checkPCPExist['Items'] == null && count($checkPCPExist['Items']) > 0){
@@ -317,31 +317,31 @@ class PCPRevisionUpdateController extends Controller
         $revisionResult3[] = [
             [
                 'Name' => "pcp_num",
-                'Value' => $request->input('pcp_doc')['pcp_num'],
+                'Value' => $request['pcp_doc']['pcp_num'],
                 'Modified' => true,
                 'ISNull' => false,
             ],
             [
                 'Name' => "revision",
-                'Value' => $request->input('pcp_doc')['revision'],
+                'Value' => $request['pcp_doc']['revision'],
                 'Modified' => true,
                 'ISNull' => false,
             ],
             [
                 'Name' => "item",
-                'Value' => $request->input('pcp_doc')['item'],
+                'Value' => $request['pcp_doc']['item'],
                 'Modified' => true,
                 'ISNull' => false,
             ],
             [
                 'Name' => "fa_item",
-                'Value' => $request->input('pcp_doc')['fa_item'],
+                'Value' => $request['pcp_doc']['fa_item'],
                 'Modified' => true,
                 'ISNull' => false,
             ],
             [
                 'Name' => "qty_per_month",
-                'Value' => $request->input('pcp_doc')['qty_per_month'],
+                'Value' => $request['pcp_doc']['qty_per_month'],
                 'Modified' => true,
                 'ISNull' => false,
             ]
@@ -467,8 +467,8 @@ class PCPRevisionUpdateController extends Controller
         $invokeMethod = 'AS_PCP_CopyBOMSp';
         $invokeBody = [
             "", //INFOBAR
-            $request->input('pcp_doc')['pcp_num'],
-            $request->input('pcp_doc')['revision'],
+            $request['pcp_doc']['pcp_num'],
+            $request['pcp_doc']['revision'],
             "", //SITE
         ];
         $invokeRes = $client->request('POST', $csi_url . "/ido/invoke/" . $invokeIDO . "?method=" . $invokeMethod . "", ['headers' => ['Authorization' => $tokenData], 'json' => $invokeBody]);
@@ -517,7 +517,9 @@ class PCPRevisionUpdateController extends Controller
             'Message'   => 'No Config Name found'
         ), 404);
 
-        if (empty($request->all())){
+        $tokenData = $request->header('Authorization');
+        $request = json_decode(json_encode(json_decode(preg_replace('/\xc2\xa0/', '', $request->getContent())), JSON_PRETTY_PRINT),true);
+        if (empty($request)){
             return Response::json(array(
                 'Success'   => false,
                 'Code'      =>  404,
@@ -525,10 +527,8 @@ class PCPRevisionUpdateController extends Controller
             ), 404);
         }
 
-        $tokenData = $request->header('Authorization');
         $client = new Client();
-        $request = json_decode(json_encode(json_decode(preg_replace('/\xc2\xa0/', '', $request->getContent())), JSON_PRETTY_PRINT),true);
-        
+    
         foreach ($request['revision_doc'] as $revisionDoc) {
             $loadCollectionIDO = 'AS_PCP_RevisionStats';
             $loadCollectionProperties = 'pcp_num, revision, stat';
