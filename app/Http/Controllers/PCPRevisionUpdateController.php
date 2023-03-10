@@ -29,26 +29,26 @@ class PCPRevisionUpdateController extends Controller
         if($csi_url == '' || $csi_url == null)
         return Response::json(array(
             'Success'   => false,
-            'Code'      =>  404,
+            'Code'      =>  200,
             'Message'   => 'No Config Name found'
-        ), 404);
+        ), 200);
 
         $tokenData = $request->header('Authorization');
         $request = json_decode(json_encode(json_decode(preg_replace('/\xc2\xa0/', '', $request->getContent())), JSON_PRETTY_PRINT),true);
         if (empty($request)){
             return Response::json(array(
                 'Success'   => false,
-                'Code'      =>  404,
+                'Code'      =>  200,
                 'Message'   => 'Invalid JSON format'
-            ), 404);
+            ), 200);
         }
 
         if(($request['pcp_doc']['item'] == null || $request['pcp_doc']['item'] == "") && ($request['pcp_doc']['fa_item'] == null || $request['pcp_doc']['fa_item'] == "")){
             return Response::json(array(
                 'Success'   => false,
-                'Code'      =>  404,
+                'Code'      =>  200,
                 'Message'   => 'Item or FA Item must be filled'
-            ), 404); 
+            ), 200); 
         }
         
         $client = new Client();
@@ -476,9 +476,9 @@ class PCPRevisionUpdateController extends Controller
         if ($invokeResponse['ReturnValue'] != 0) {
             return Response::json(array(
                 'Success'   => false,
-                'Code'      => 404,
+                'Code'      => 200,
                 'Message'   =>  $invokeResponse['Parameters'][0]
-            ), 404);
+            ), 200);
         } 
         //INVOKE END
 
@@ -491,9 +491,9 @@ class PCPRevisionUpdateController extends Controller
         } else {
             return Response::json(array(
                 'Success'   => false,
-                'Code'      => 404,
+                'Code'      => 200,
                 'Message'   => 'BOM Copy failed'
-            ), 404);
+            ), 200);
         }
     }
 
@@ -513,18 +513,18 @@ class PCPRevisionUpdateController extends Controller
         if($csi_url == '' || $csi_url == null)
         return Response::json(array(
             'Success'   => false,
-            'Code'      =>  404,
+            'Code'      =>  200,
             'Message'   => 'No Config Name found'
-        ), 404);
+        ), 200);
 
         $tokenData = $request->header('Authorization');
         $request = json_decode(json_encode(json_decode(preg_replace('/\xc2\xa0/', '', $request->getContent())), JSON_PRETTY_PRINT),true);
         if (empty($request)){
             return Response::json(array(
                 'Success'   => false,
-                'Code'      =>  404,
+                'Code'      =>  200,
                 'Message'   => 'Invalid JSON format'
-            ), 404);
+            ), 200);
         }
 
         $client = new Client();
@@ -602,9 +602,9 @@ class PCPRevisionUpdateController extends Controller
         }  
         return Response::json(array(
             'Success'   => false,
-            'Code'      =>  404,
+            'Code'      =>  200,
             'Message'   => 'No Revision needed to be updated'
-        ), 404);
+        ), 200);
     }
 
     public function PCPGetRevisionUpdate(Request $request){ 
@@ -619,13 +619,11 @@ class PCPRevisionUpdateController extends Controller
         $client = new Client();
         
         if($tokenData == null || $tokenData == ""){
-            $tokenErrorMessage = json_decode($token->getBody(), true)['Message'];
-            $this->insertErrorLog($tokenErrorMessage, $client, $request, $tokenData);
             return Response::json(array(
                 'Success'   => false,
-                'Code'      =>  404,
-                'Message'   =>  $tokenErrorMessage
-            ), 404);
+                'Code'      =>  200,
+                'Message'   =>  'Invalid Token'
+            ), 200);
         }
         $loadCollectionIDO = 'AS_PCP_RevisionStats';
         $loadCollectionProperties = 'pcp_num, revision, stat';
