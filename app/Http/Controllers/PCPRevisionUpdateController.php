@@ -59,16 +59,20 @@ class PCPRevisionUpdateController extends Controller
         $loadCollectionFilter = "pcp_num = '".$request['pcp_doc']['pcp_num']."'";
         $loadCollectRes = $client->request('GET', $csi_url . "/ido/load/" . $loadCollectionIDO . "?properties=" . $loadCollectionProperties . "&filter=" . $loadCollectionFilter, ['headers' => ['Authorization' => $tokenData]]);
         $checkPCPExist = json_decode($loadCollectRes->getBody(), true);
-        if($checkPCPExist['Items'] == null && count($checkPCPExist['Items']) > 0){
-            return $checkPCPExist;
-        } else if($checkPCPExist['Items'] != null && count($checkPCPExist['Items']) > 0){
-            foreach ($checkPCPExist['Items'] as $itemData) {
-                $deleteResult[] = 
-                    [
-                        'Action' => 4,
-                        'ItemId' => $itemData['_ItemId'],
-                    ];   
+        if(is_array($checkPCPExist['Items'])){
+            if($checkPCPExist['Items'] == null && count($checkPCPExist['Items']) > 0){
+                return $checkPCPExist;
+            } else if($checkPCPExist['Items'] != null && count($checkPCPExist['Items']) > 0){
+                foreach ($checkPCPExist['Items'] as $itemData) {
+                    $deleteResult[] = 
+                        [
+                            'Action' => 4,
+                            'ItemId' => $itemData['_ItemId'],
+                        ];   
+                }
             }
+        } else{
+            return $checkPCPExist;
         }
 
         foreach ($request['pcp_doc']['pcp_sales_detail'] as $revisionDoc) {
@@ -136,16 +140,20 @@ class PCPRevisionUpdateController extends Controller
         $loadCollectionFilter = "pcp_num = '".$request['pcp_doc']['pcp_num']."'";
         $loadCollectRes = $client->request('GET', $csi_url . "/ido/load/" . $loadCollectionIDO . "?properties=" . $loadCollectionProperties . "&filter=" . $loadCollectionFilter, ['headers' => ['Authorization' => $tokenData]]);
         $checkPCPExist = json_decode($loadCollectRes->getBody(), true);
-        if($checkPCPExist['Items'] == null && count($checkPCPExist['Items']) > 0){
-            return $checkPCPExist;
-        } else if($checkPCPExist['Items'] != null && count($checkPCPExist['Items']) > 0){
-            foreach ($checkPCPExist['Items'] as $itemData) {
-                $deleteResult1[] = 
-                    [
-                        'Action' => 4,
-                        'ItemId' => $itemData['_ItemId'],
-                    ];   
+        if(is_array($checkPCPExist['Items'])){
+            if($checkPCPExist['Items'] == null && count($checkPCPExist['Items']) > 0){
+                return $checkPCPExist;
+            } else if($checkPCPExist['Items'] != null && count($checkPCPExist['Items']) > 0){
+                foreach ($checkPCPExist['Items'] as $itemData) {
+                    $deleteResult1[] = 
+                        [
+                            'Action' => 4,
+                            'ItemId' => $itemData['_ItemId'],
+                        ];   
+                }
             }
+        } else {
+            return $checkPCPExist;
         }
 
         foreach ($request['pcp_doc']['pcp_process_detail'] as $revisionDoc) {
@@ -243,16 +251,20 @@ class PCPRevisionUpdateController extends Controller
         $loadCollectionFilter = "pcp_num = '".$request['pcp_doc']['pcp_num']."'";
         $loadCollectRes = $client->request('GET', $csi_url . "/ido/load/" . $loadCollectionIDO . "?properties=" . $loadCollectionProperties . "&filter=" . $loadCollectionFilter, ['headers' => ['Authorization' => $tokenData]]);
         $checkPCPExist = json_decode($loadCollectRes->getBody(), true);
-        if($checkPCPExist['Items'] == null && count($checkPCPExist['Items']) > 0){
-            return $checkPCPExist;
-        } else if($checkPCPExist['Items'] != null && count($checkPCPExist['Items']) > 0){
-            foreach ($checkPCPExist['Items'] as $itemData) {
-                $deleteResult2[] = 
-                    [
-                        'Action' => 4,
-                        'ItemId' => $itemData['_ItemId'],
-                    ];   
+        if(is_array($checkPCPExist['Items'])){
+            if($checkPCPExist['Items'] == null && count($checkPCPExist['Items']) > 0){
+                return $checkPCPExist;
+            } else if($checkPCPExist['Items'] != null && count($checkPCPExist['Items']) > 0){
+                foreach ($checkPCPExist['Items'] as $itemData) {
+                    $deleteResult2[] = 
+                        [
+                            'Action' => 4,
+                            'ItemId' => $itemData['_ItemId'],
+                        ];   
+                }
             }
+        } else {
+            return $checkPCPExist;
         }
 
         foreach ($request['pcp_doc']['pcp_matl_detail'] as $revisionDoc) {
@@ -302,16 +314,20 @@ class PCPRevisionUpdateController extends Controller
         $loadCollectionFilter = "pcp_num = '".$request['pcp_doc']['pcp_num']."'";
         $loadCollectRes = $client->request('GET', $csi_url . "/ido/load/" . $loadCollectionIDO . "?properties=" . $loadCollectionProperties . "&filter=" . $loadCollectionFilter, ['headers' => ['Authorization' => $tokenData]]);
         $checkPCPExist = json_decode($loadCollectRes->getBody(), true);
-        if($checkPCPExist['Items'] == null && count($checkPCPExist['Items']) > 0){
-            return $checkPCPExist;
-        } else if($checkPCPExist['Items'] != null && count($checkPCPExist['Items']) > 0){
-            foreach ($checkPCPExist['Items'] as $itemData) {
-                $deleteResult3[] = 
-                    [
-                        'Action' => 4,
-                        'ItemId' => $itemData['_ItemId'],
-                    ];   
+        if(is_array($checkPCPExist['Items'])){
+            if($checkPCPExist['Items'] == null && count($checkPCPExist['Items']) > 0){
+                return $checkPCPExist;
+            } else if($checkPCPExist['Items'] != null && count($checkPCPExist['Items']) > 0){
+                foreach ($checkPCPExist['Items'] as $itemData) {
+                    $deleteResult3[] = 
+                        [
+                            'Action' => 4,
+                            'ItemId' => $itemData['_ItemId'],
+                        ];   
+                }
             }
+        } else {
+            return $checkPCPExist;
         }
 
         $revisionResult3[] = [
@@ -535,16 +551,20 @@ class PCPRevisionUpdateController extends Controller
             $loadCollectionFilter = "pcp_num = '".$revisionDoc['pcp_num']."'";
             $loadCollectRes = $client->request('GET', $csi_url . "/ido/load/" . $loadCollectionIDO . "?properties=" . $loadCollectionProperties . "&filter=" . $loadCollectionFilter, ['headers' => ['Authorization' => $tokenData]]);
             $checkPCPExist = json_decode($loadCollectRes->getBody(), true);
-            if($checkPCPExist['Items'] == null && count($checkPCPExist['Items']) > 0){
+            if(is_array($checkPCPExist['Items'])){
+                if($checkPCPExist['Items'] == null && count($checkPCPExist['Items']) > 0){
+                    return $checkPCPExist;
+                } else if($checkPCPExist['Items'] != null && count($checkPCPExist['Items']) > 0){
+                    foreach ($checkPCPExist['Items'] as $itemData) {
+                        $deleteResult[] = 
+                            [
+                                'Action' => 4,
+                                'ItemId' => $itemData['_ItemId'],
+                            ];   
+                    }
+                } 
+            } else {
                 return $checkPCPExist;
-            } else if($checkPCPExist['Items'] != null && count($checkPCPExist['Items']) > 0){
-                foreach ($checkPCPExist['Items'] as $itemData) {
-                    $deleteResult[] = 
-                        [
-                            'Action' => 4,
-                            'ItemId' => $itemData['_ItemId'],
-                        ];   
-                }
             }
 
             foreach ($revisionDoc['revision_detail'] as $revisionData) {
